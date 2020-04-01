@@ -1,21 +1,8 @@
 import pandas as pd
 import numpy
 our_data = pd.read_csv("optimization data")
-"""
-Implementation of the Hungarian (Munkres) Algorithm using Python and NumPy
-References: http://www.ams.jhu.edu/~castello/362/Handouts/hungarian.pdf
-        http://weber.ucsd.edu/~vcrawfor/hungar.pdf
-        http://en.wikipedia.org/wiki/Hungarian_algorithm
-        http://www.public.iastate.edu/~ddoty/HungarianAlgorithm.html
-        http://www.clapper.org/software/python/munkres/
-"""
 
-# Module Information.
-__version__ = "1.1.1"
-__author__ = "Thom Dedecko"
-__url__ = "http://github.com/tdedecko/hungarian-algorithm"
-__copyright__ = "(c) 2010 Thom Dedecko"
-__license__ = "MIT License"
+
 
 
 class HungarianError(Exception):
@@ -29,28 +16,7 @@ except ImportError:
 
 
 class Hungarian:
-    """
-    Implementation of the Hungarian (Munkres) Algorithm using np.
 
-    Usage:
-        hungarian = Hungarian(cost_matrix)
-        hungarian.calculate()
-    or
-        hungarian = Hungarian()
-        hungarian.calculate(cost_matrix)
-
-    Handle Profit matrix:
-        hungarian = Hungarian(profit_matrix, is_profit_matrix=True)
-    or
-        cost_matrix = Hungarian.make_cost_matrix(profit_matrix)
-
-    The matrix will be automatically padded if it is not square.
-    For that numpy's resize function is used, which automatically adds 0's to any row/column that is added
-
-    Get results and total potential after calculation:
-        hungarian.get_results()
-        hungarian.get_total_potential()
-    """
 
     def __init__(self, input_matrix=None, is_profit_matrix=False):
         """
@@ -165,19 +131,14 @@ class Hungarian:
 
     @staticmethod
     def make_cost_matrix(profit_matrix):
-        """
-        Converts a profit matrix into a cost matrix.
-        Expects NumPy objects as input.
-        """
-        # subtract profit matrix from a matrix made of the max value of the profit matrix
+
         matrix_shape = profit_matrix.shape
         offset_matrix = np.ones(matrix_shape, dtype=int) * profit_matrix.max()
         cost_matrix = offset_matrix - profit_matrix
         return cost_matrix
 
     def _adjust_matrix_by_min_uncovered_num(self, result_matrix, covered_rows, covered_columns):
-        """Subtract m from every uncovered number and add m to every element covered with two lines."""
-        # Calculate minimum uncovered number (m)
+
         elements = []
         for row_index, row in enumerate(result_matrix):
             if row_index not in covered_rows:
@@ -300,7 +261,6 @@ class CoverZeros:
     def __calculate(self):
         """
         Calculates minimum number of lines necessary to cover all zeros in a matrix.
-        Algorithm based on: http://weber.ucsd.edu/~vcrawfor/hungar.pdf
         """
         while True:
             # Erase all marks.
@@ -417,10 +377,7 @@ class CoverZeros:
         return None
 
     def __find_best_choice_row_and_new_column(self, choice_column_index):
-        """
-        Find a row index to use for the choice so that the column that needs to be changed is optimal.
-        Return a random row and column if unable to find an optimal selection.
-        """
+
         row_indices, = np.where(self._zero_locations[:, choice_column_index])
         for row_index in row_indices:
             column_indices, = np.where(self._choices[row_index])
